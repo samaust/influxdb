@@ -727,7 +727,7 @@ func (i *Index) SeriesPointIterator(opt query.IteratorOptions) (query.Iterator, 
 	}, nil
 }
 
-func (i *Index) MeasurementSeriesPointIterator(measurement string, opt influxql.IteratorOptions) (influxql.Iterator, error) {
+func (i *Index) MeasurementSeriesPointIterator(measurement string, opt query.IteratorOptions) (query.Iterator, error) {
 	mm, ok := i.measurements[measurement]
 	if !ok {
 		return nil, nil
@@ -735,7 +735,7 @@ func (i *Index) MeasurementSeriesPointIterator(measurement string, opt influxql.
 
 	return &seriesPointIterator{
 		mms: Measurements{mm},
-		point: influxql.FloatPoint{
+		point: query.FloatPoint{
 			Aux: make([]interface{}, len(opt.Aux)),
 		},
 		opt: opt,
