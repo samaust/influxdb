@@ -162,9 +162,6 @@ func (c *compiledStatement) compile(stmt *influxql.SelectStatement) error {
 	if err := c.validateFields(); err != nil {
 		return err
 	}
-	if err := c.validateDimensions(); err != nil {
-		return err
-	}
 
 	// Look through the sources and compile each of the subqueries (if they exist).
 	// We do this after compiling the outside because subqueries may require
@@ -744,17 +741,6 @@ func (c *compiledStatement) validateFields() error {
 			return fmt.Errorf("mixing aggregate and non-aggregate queries is not supported")
 		} else if len(c.FunctionCalls) > 1 {
 			return fmt.Errorf("mixing multiple selector functions with tags or fields is not supported")
-		}
-	}
-	return nil
-}
-
-// validateDimensions validates that the dimensions are appropriate for this type of query.
-func (c *compiledStatement) validateDimensions() error {
-	if !c.Interval.IsZero() && !c.InheritedInterval {
-		// There must be a lower limit that wasn't implicitly set.
-		if c.TimeRange.Min.UnixNano() == influxql.MinTime {
-			return errors.New("aggregate functions with GROUP BY time require a WHERE time clause with a lower limit")
 		}
 	}
 	return nil
